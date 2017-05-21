@@ -1,0 +1,21 @@
+body {
+  font-family: "Courier New", Courier, monospace;
+}
+
+#mumlr {
+  color: red;
+}
+
+#mumlr.ok {
+  color: green;
+}
+
+.cell {
+  outline: 4px solid black;
+  float: left;
+  background-color: white;
+}
+
+.cell.on {
+  background-color: green;
+}
