@@ -17,13 +17,13 @@ MateLight.prototype.init = function() {
   this.container.style.width = CELL_SIZE * NUM_COLS +'px';
   this.container.style.height = CELL_SIZE * NUM_ROWS +'px';
 
-  for (var i=0; i<NUM_ROWS; i++) {
-    for (var j=0; j<NUM_COLS; j++) {
+  for (var y=0; y<NUM_ROWS; y++) {
+    for (var x=0; x<NUM_COLS; x++) {
       var div = document.createElement('DIV');
 
       div.className = 'cell';
-      div.setAttribute('y', i);
-      div.setAttribute('x', j);
+      div.setAttribute('y', y);
+      div.setAttribute('x', x);
       div.style.height = CELL_SIZE+'px';
       div.style.width = CELL_SIZE+'px';
 
@@ -40,8 +40,8 @@ MateLight.prototype.bindListener = function() {
       return;
     }
 
-    var x = (target.getAttribute('x'));
-    var y = (target.getAttribute('y'));
+    var x = parseInt(target.getAttribute('x'));
+    var y = parseInt(target.getAttribute('y'));
 
     if (target.classList.contains('on')) {
       this.off(target);
@@ -54,6 +54,11 @@ MateLight.prototype.bindListener = function() {
   }.bind(this);
 };
 
+MateLight.prototype.getCell = function(x, y) {
+  var selector = '[x="'+ x+'"][y="'+ y +'"]';
+  return document.querySelector(selector);
+}
+
 MateLight.prototype.on = function(target) {
   target.classList.add('on');
 };
@@ -61,6 +66,16 @@ MateLight.prototype.on = function(target) {
 MateLight.prototype.off = function(target) {
   target.classList.remove('on');
 };
+
+MateLight.prototype.set = function(matrix) {
+  for (var y=0; y<NUM_ROWS; y++) {
+    for (var x=0; x<NUM_COLS; x++) {
+      var cell = this.getCell(x, y);
+
+      matrix[y][x] ? this.on(cell) : this.off(cell);
+    }
+  }
+}
 
 var mateLight = new MateLight();
 
@@ -76,8 +91,13 @@ ws.onclose = function() {
 
 ws.onmessage = function(message) {
   var led = JSON.parse(message.data);
-  var selector = '[x="'+ led.x+'"][y="'+ led.y +'"]';
-  var cell = document.querySelector(selector);
+
+  if (led.matrix) {
+    mateLight.set(led.matrix);
+    return;
+  }
+
+  var cell = mateLight.getCell(led.x, led.y);
 
   led.s === 1 ? mateLight.on(cell) : mateLight.off(cell);
 };
