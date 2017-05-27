@@ -3,12 +3,7 @@
 const connect = require('connect');
 const serveStatic = require('serve-static');
 const WebSocket = require('ws');
-
-// configuration
-const WS_PORT = 8080;
-const APP_PORT = 3000;
-const NUM_ROWS = 4;
-const NUM_COLS = 5;
+const config = require('./config');
 
 function MateLight() {
   this.createMatrix();
@@ -17,10 +12,10 @@ function MateLight() {
 MateLight.prototype.createMatrix = function() {
   this.matrix = [];
 
-  for (var y=0; y<NUM_ROWS; y++) {
+  for (var y = 0; y < config.matrix_rows; y++) {
     this.matrix[y] = [];
 
-    for (var x=0; x<NUM_COLS; x++) {
+    for (var x = 0; x < config.matrix_cols; x++) {
       this.matrix[y][x] = 0;
     }
   }
@@ -32,16 +27,16 @@ MateLight.prototype.change = function(x, y, status) {
 
 const mateLight = new MateLight();
 
-const wss = new WebSocket.Server({ port: WS_PORT }, function() {
-  console.log('websocket listening on port '+ WS_PORT);
+const wss = new WebSocket.Server({ port: config.websocket_port }, function() {
+  console.log('websocket listening on port '+ config.websocket_port);
 });
 
 var app = connect();
 
-app.use(serveStatic('public'));
-app.listen(APP_PORT);
+app.use(serveStatic('app'));
+app.listen(config.host_port);
 
-console.log('serving static files on port ' + APP_PORT);
+console.log('serving static files on port ' + config.host_port);
 
 wss.broadcast = function(data) {
   wss.clients.forEach(function (client) {

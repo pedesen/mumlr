@@ -1,11 +1,7 @@
 'use strict';
 
-// configuration
-var HOST = '192.168.1.1';
-var PORT = 8080;
-var CELL_SIZE = 150;
-var NUM_ROWS = 4;
-var NUM_COLS = 5;
+import fastclick from 'fastclick';
+import config from '../config';
 
 function MateLight() {
   this.container = document.getElementById('container');
@@ -14,18 +10,18 @@ function MateLight() {
 }
 
 MateLight.prototype.init = function() {
-  this.container.style.width = CELL_SIZE * NUM_COLS +'px';
-  this.container.style.height = CELL_SIZE * NUM_ROWS +'px';
+  this.container.style.width = config.cell_size * config.matrix_cols +'px';
+  this.container.style.height = config.cell_size * config.matrix_rows +'px';
 
-  for (var y=0; y<NUM_ROWS; y++) {
-    for (var x=0; x<NUM_COLS; x++) {
+  for (var y=0; y<config.matrix_rows; y++) {
+    for (var x=0; x<config.matrix_cols; x++) {
       var div = document.createElement('DIV');
 
       div.className = 'cell';
       div.setAttribute('y', y);
       div.setAttribute('x', x);
-      div.style.height = CELL_SIZE+'px';
-      div.style.width = CELL_SIZE+'px';
+      div.style.height = config.cell_size+'px';
+      div.style.width = config.cell_size+'px';
 
       this.container.appendChild(div);
     }
@@ -68,8 +64,8 @@ MateLight.prototype.off = function(target) {
 };
 
 MateLight.prototype.set = function(matrix) {
-  for (var y=0; y<NUM_ROWS; y++) {
-    for (var x=0; x<NUM_COLS; x++) {
+  for (var y=0; y<config.matrix_rows; y++) {
+    for (var x=0; x<config.matrix_cols; x++) {
       var cell = this.getCell(x, y);
 
       matrix[y][x] ? this.on(cell) : this.off(cell);
@@ -79,7 +75,7 @@ MateLight.prototype.set = function(matrix) {
 
 var mateLight = new MateLight();
 
-var ws = new WebSocket('ws://'+HOST+':'+PORT, "protocolOne");
+var ws = new WebSocket('ws://'+config.host_ip+':'+config.websocket_port, "protocolOne");
 
 ws.onopen = function() {
   document.querySelector('#mumlr').classList.add('ok');
@@ -104,5 +100,4 @@ ws.onmessage = function(message) {
 
 // use FastClick to remove click delays
 // on browsers with touch UIs
-var attachFastClick = Origami.fastclick;
-attachFastClick(document.body);
+fastclick.attach(document.body);
