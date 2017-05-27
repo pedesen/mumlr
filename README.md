@@ -16,3 +16,6 @@ yarn
 npm run all
 ```
 
+### License
+
+MIT
