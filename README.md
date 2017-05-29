@@ -9,11 +9,11 @@ Enables multiple users to open a web page and control an LED Matrix called Mate 
 * `app/` - Files to be served (html, css, js)
 * `espruino/mumlr.js` - Code to deploy to a micro controller running Espruino firmware
 
-### Usage
+### Install dependencies and run server
 
 ```
 yarn
-npm run all
+yarn run all
 ```
 
 ### License
